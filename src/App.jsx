@@ -1,4 +1,3 @@
-import './App.css'
 import TransactionForm from './components/TransactionForm'
 import TransactionAlert from './components/TransactionAlert'
 
