@@ -10,3 +10,12 @@ body {
 .input {
     @apply w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500;
 }
+
+@keyframes pulse-soft {
+  0% { background-color: rgba(254, 202, 202, 0.6); }
+  100% { background-color: transparent; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 1.5s ease-out;
+}
