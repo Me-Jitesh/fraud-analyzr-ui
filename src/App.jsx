@@ -1,9 +1,10 @@
-import FraudAlerts from "./components/FraudAlerts";
+import Header from "./components/Header";
 import StreamStatus from "./components/StreamStatus";
+import FraudAlerts from "./components/FraudAlerts";
 
 export default function App() {
   return (
-    <div className="min-h-screen px-6 py-10">
+    <div className="min-h-screen bg-[#fafafa] px-6 py-10">
       <div className="max-w-6xl mx-auto space-y-10">
         <Header />
 
@@ -15,14 +16,3 @@ export default function App() {
     </div>
   );
 }
-
-const Header = () => (
-  <div className="space-y-2">
-    <h1 className="text-3xl font-semibold tracking-tight">
-      Fraud Detection
-    </h1>
-    <p className="text-gray-500">
-      Real-time transaction monitoring powered by Kafka Streams
-    </p>
-  </div>
-);

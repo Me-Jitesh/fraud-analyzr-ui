@@ -3,20 +3,43 @@ import api from "../api/axios";
 import Card from "./ui/Card";
 
 export default function StreamStatus() {
-  const [count, setCount] = useState(0);
+  const [status, setStatus] = useState("UNKNOWN");
+  const [events, setEvents] = useState(0);
+  const [updatedAt, setUpdatedAt] = useState(null);
 
   useEffect(() => {
-    api.get("/api/v1/stream/status")
-      .then(res => setCount(res.data.processedTransactions))
-      .catch(console.error);
+    const fetchStatus = () => {
+      api.get("/api/v1/stream/status")
+        .then(res => {
+          setStatus(res.data.status || "RUNNING");
+          setEvents(res.data.processedTransactions || 0);
+          setUpdatedAt(res.data.updatedAt || new Date().toISOString());
+        })
+        .catch(console.error);
+    };
+
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 5000); // polling
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <Card title="Live Stream">
+    <Card title="📡 Stream Status">
       <div className="space-y-2">
-        <p className="text-4xl font-semibold">{count}</p>
-        <p className="text-gray-400 text-sm">
-          Transactions processed
+        <p className="text-sm">
+          Status:{" "}
+          <span className="font-medium text-green-600">
+            {status}
+          </span>
+        </p>
+
+        <p className="text-sm text-gray-500">
+          Events: <span className="font-semibold">{events}</span>
+        </p>
+
+        <p className="text-xs text-gray-400">
+          Updated: {updatedAt}
         </p>
       </div>
     </Card>
