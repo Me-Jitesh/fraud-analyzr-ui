@@ -4,17 +4,21 @@ import Card from "./ui/Card";
 
 export default function FraudAlerts() {
   const [alerts, setAlerts] = useState([]);
-  const prevCountRef = useRef(0);
+  const prevIdsRef = useRef(new Set());
   const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
         const res = await api.get("/api/v1/fraud/alerts");
-        const data = Array.isArray(res.data) ? res.data : [];
+        const incoming = Array.isArray(res.data) ? res.data : [];
 
-        prevCountRef.current = alerts.length;
-        setAlerts(data);
+        // Ensure newest first
+        const sorted = [...incoming].sort(
+          (a, b) => new Date(b.detectedAt) - new Date(a.detectedAt)
+        );
+
+        setAlerts(sorted);
       } catch (err) {
         console.error(err);
       }
@@ -23,20 +27,30 @@ export default function FraudAlerts() {
     fetchAlerts();
     const id = setInterval(fetchAlerts, 4000);
     return () => clearInterval(id);
-  }, [alerts.length]);
+  }, []);
 
-  // 🔽 Auto-scroll to latest
+  // 🧠 Track new alerts by unique key
+  const isNewAlert = (a) => {
+    const key = `${a.accountId}-${a.transactionId}-${a.detectedAt}`;
+    if (prevIdsRef.current.has(key)) return false;
+    prevIdsRef.current.add(key);
+    return true;
+  };
+
+  // 🔝 Auto-scroll to top when new alert arrives
   useEffect(() => {
-    containerRef.current?.scrollTo({
-      top: containerRef.current.scrollHeight,
-      behavior: "smooth"
-    });
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
   }, [alerts.length]);
 
   return (
     <div className="md:col-span-2">
-      <Card title="⚠️ Fraud Alerts">
-        <div ref={containerRef} className="max-h-[420px] overflow-y-auto">
+      <Card title="⚠️ Fraud Alerts (Latest First)">
+        <div
+          ref={containerRef}
+          className="max-h-[420px] overflow-y-auto"
+        >
           {/* Header */}
           <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 border-b pb-2 sticky top-0 bg-white z-10">
             <div>Account</div>
@@ -47,17 +61,17 @@ export default function FraudAlerts() {
 
           {/* Rows */}
           <div className="divide-y">
-            {alerts.map((a, i) => {
-              const isNew = i >= prevCountRef.current;
+            {alerts.map((a) => {
+              const newRow = isNewAlert(a);
 
               return (
                 <div
-                  key={`${a.transactionId}-${i}`}
+                  key={`${a.transactionId}-${a.detectedAt}`}
                   className={`
                     grid grid-cols-4 gap-4 py-3 text-sm items-center
                     hover:bg-gray-100 transition
                     ${getSeverityClass(a.reason)}
-                    ${isNew ? "animate-slide-in" : ""}
+                    ${newRow ? "animate-slide-in" : ""}
                   `}
                 >
                   <div className="font-medium">{a.accountId}</div>
