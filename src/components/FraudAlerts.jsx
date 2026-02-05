@@ -16,7 +16,7 @@ export default function FraudAlerts() {
     };
 
     fetchAlerts();
-    const interval = setInterval(fetchAlerts, 4000); // polling
+    const interval = setInterval(fetchAlerts, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -28,9 +28,10 @@ export default function FraudAlerts() {
             No suspicious activity detected
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          // 👇 Scrollable container
+          <div className="max-h-[420px] overflow-y-auto pr-2">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="sticky top-0 bg-white z-10">
                 <tr className="text-left text-gray-400 border-b">
                   <th className="pb-3 font-medium">Account</th>
                   <th className="pb-3 font-medium">Transaction</th>
@@ -41,7 +42,14 @@ export default function FraudAlerts() {
 
               <tbody className="divide-y">
                 {alerts.map((a, i) => (
-                  <tr key={i} className="hover:bg-gray-50">
+                  <tr
+                    key={i}
+                    className="
+                      transition
+                      hover:bg-gray-50
+                      hover:shadow-sm
+                    "
+                  >
                     <td className="py-3 font-medium">
                       {a.accountId || "-"}
                     </td>
