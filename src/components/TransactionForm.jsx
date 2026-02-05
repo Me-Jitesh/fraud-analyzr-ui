@@ -1,97 +1,109 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
+import Card from "./ui/Card";
 
 export default function TransactionForm() {
   const [form, setForm] = useState({
     transactionId: "",
     accountId: "",
     amount: "",
-    merchant: ""
+    merchant: "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState(null);
 
-  const handleChange = (e) => {
+  const onChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const submitTxn = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
+    setSuccess(null);
 
     try {
-      await axios.post("http://localhost:8080/api/v1/txn/pay", {
+      await api.post("/api/v1/txn/pay", {
         ...form,
-        timestamp: new Date()
+        amount: Number(form.amount),
+        timestamp: new Date().toISOString(),
       });
-      setMessage("✅ Transaction sent for fraud analysis");
+
+      setSuccess(true);
       setForm({ transactionId: "", accountId: "", amount: "", merchant: "" });
     } catch (err) {
-      setMessage("❌ Failed to send transaction");
+      setSuccess(false);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-6">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          💳 Transaction Payment
-        </h2>
+    <Card title="💳 Create Transaction">
+      <form onSubmit={submit} className="space-y-4">
+        <Input
+          label="Account ID"
+          name="accountId"
+          value={form.accountId}
+          onChange={onChange}
+          required
+        />
 
-        <form onSubmit={submitTxn} className="space-y-4">
-          <input
-            name="transactionId"
-            placeholder="Transaction ID"
-            value={form.transactionId}
-            onChange={handleChange}
-            required
-            className="input"
-          />
+        <Input
+          label="Transaction ID"
+          name="transactionId"
+          value={form.transactionId}
+          onChange={onChange}
+          required
+        />
 
-          <input
-            name="accountId"
-            placeholder="Account ID"
-            value={form.accountId}
-            onChange={handleChange}
-            required
-            className="input"
-          />
+        <Input
+          label="Amount"
+          name="amount"
+          type="number"
+          value={form.amount}
+          onChange={onChange}
+          required
+        />
 
-          <input
-            name="amount"
-            type="number"
-            placeholder="Amount"
-            value={form.amount}
-            onChange={handleChange}
-            required
-            className="input"
-          />
+        <Input
+          label="Merchant"
+          name="merchant"
+          value={form.merchant}
+          onChange={onChange}
+          required
+        />
 
-          <input
-            name="merchant"
-            placeholder="Merchant"
-            value={form.merchant}
-            onChange={handleChange}
-            required
-            className="input"
-          />
+        <button
+          disabled={loading}
+          className="w-full bg-black text-white rounded-xl py-2 text-sm hover:opacity-90 disabled:opacity-50"
+        >
+          {loading ? "Processing..." : "Submit Transaction"}
+        </button>
 
-          <button
-            disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold transition"
-          >
-            {loading ? "Processing..." : "Pay Now"}
-          </button>
-        </form>
-
-        {message && (
-          <p className="text-center mt-4 font-medium">{message}</p>
+        {success === true && (
+          <p className="text-sm text-green-600">
+            Transaction sent successfully
+          </p>
         )}
-      </div>
-    </div>
+
+        {success === false && (
+          <p className="text-sm text-red-600">
+            Failed to send transaction
+          </p>
+        )}
+      </form>
+    </Card>
   );
 }
+
+const Input = ({ label, ...props }) => (
+  <div className="space-y-1">
+    <label className="text-xs text-gray-500">{label}</label>
+    <input
+      {...props}
+      className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
+    />
+  </div>
+);

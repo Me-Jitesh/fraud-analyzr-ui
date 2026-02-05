@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import StreamStatus from "./components/StreamStatus";
 import FraudAlerts from "./components/FraudAlerts";
+import TransactionForm from "./components/TransactionForm";
 
 export default function App() {
   return (
@@ -9,7 +10,11 @@ export default function App() {
         <Header />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StreamStatus />
+          <div className="space-y-6">
+            <StreamStatus />
+            <TransactionForm />
+          </div>
+
           <FraudAlerts />
         </div>
       </div>
