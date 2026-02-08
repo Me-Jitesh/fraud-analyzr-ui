@@ -1,26 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import api from "../api/axios";
+import Modal from "./ui/Modal";
 import Card from "./ui/Card";
 
 export default function FraudAlerts() {
   const [alerts, setAlerts] = useState([]);
-  const prevIdsRef = useRef(new Set());
+  const [selected, setSelected] = useState(null);
+  const seenRef = useRef(new Set());
   const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
         const res = await api.get("/api/v1/fraud/alerts");
-        const incoming = Array.isArray(res.data) ? res.data : [];
+        const data = Array.isArray(res.data) ? res.data : [];
 
-        // Ensure newest first
-        const sorted = [...incoming].sort(
+        // latest on top
+        const sorted = [...data].sort(
           (a, b) => new Date(b.detectedAt) - new Date(a.detectedAt)
         );
 
         setAlerts(sorted);
-      } catch (err) {
-        console.error(err);
+      } catch (e) {
+        console.error(e);
       }
     };
 
@@ -29,15 +31,13 @@ export default function FraudAlerts() {
     return () => clearInterval(id);
   }, []);
 
-  // 🧠 Track new alerts by unique key
-  const isNewAlert = (a) => {
+  const isNew = (a) => {
     const key = `${a.accountId}-${a.transactionId}-${a.detectedAt}`;
-    if (prevIdsRef.current.has(key)) return false;
-    prevIdsRef.current.add(key);
+    if (seenRef.current.has(key)) return false;
+    seenRef.current.add(key);
     return true;
   };
 
-  // 🔝 Auto-scroll to top when new alert arrives
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = 0;
@@ -46,10 +46,10 @@ export default function FraudAlerts() {
 
   return (
     <div className="md:col-span-2">
-      <Card title="⚠️ Fraud Alerts (Latest First)">
+      <Card title="🚨 Suspicious Transaction Monitoring">
         <div
           ref={containerRef}
-          className="max-h-[420px] overflow-y-auto"
+          className="max-h-[450px] overflow-y-auto"
         >
           {/* Header */}
           <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 border-b pb-2 sticky top-0 bg-white z-10">
@@ -62,25 +62,34 @@ export default function FraudAlerts() {
           {/* Rows */}
           <div className="divide-y">
             {alerts.map((a) => {
-              const newRow = isNewAlert(a);
+              const animate = isNew(a);
 
               return (
                 <div
                   key={`${a.transactionId}-${a.detectedAt}`}
+                  onClick={() => setSelected(a)}
+                  tabIndex={0}
                   className={`
                     grid grid-cols-4 gap-4 py-3 text-sm items-center
-                    hover:bg-gray-100 transition
-                    ${getSeverityClass(a.reason)}
-                    ${newRow ? "animate-slide-in" : ""}
+                    cursor-pointer transition
+                    hover:bg-gray-100
+                    focus:ring-2 focus:ring-red-300
+                    ${severityBg(a.reason)}
+                    ${animate ? "animate-slide-in" : ""}
                   `}
                 >
                   <div className="font-medium">{a.accountId}</div>
-                  <div className="text-gray-600">{a.transactionId || "—"}</div>
+
+                  <div className="text-gray-600">
+                    {a.transactionId || "—"}
+                  </div>
+
                   <div>
                     <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full">
                       {a.reason}
                     </span>
                   </div>
+
                   <div className="text-gray-500">
                     {new Date(a.detectedAt).toLocaleString()}
                   </div>
@@ -90,11 +99,39 @@ export default function FraudAlerts() {
           </div>
         </div>
       </Card>
+
+      {/* MODAL */}
+      <Modal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title="🚨 Transaction Details"
+      >
+        {selected && (
+          <div className="space-y-3 text-sm">
+            <Detail label="Account ID" value={selected.accountId} />
+            <Detail label="Transaction ID" value={selected.transactionId || "—"} />
+            <Detail label="Merchant" value={selected.merchant || "Unknown"} />
+            <Detail label="Amount" value={`₹ ${selected.amount}`} />
+            <Detail label="Reason" value={selected.reason} />
+            <Detail
+              label="Detected At"
+              value={new Date(selected.detectedAt).toLocaleString()}
+            />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
 
-const getSeverityClass = (reason = "") => {
+const Detail = ({ label, value }) => (
+  <div className="flex justify-between border-b pb-1">
+    <span className="text-gray-500">{label}</span>
+    <span className="font-medium">{value}</span>
+  </div>
+);
+
+const severityBg = (reason = "") => {
   if (reason.includes("HIGH")) return "bg-red-50";
   if (reason.includes("MEDIUM")) return "bg-yellow-50";
   return "bg-gray-50";
