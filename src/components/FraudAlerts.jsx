@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import api from "../api/axios";
 import Modal from "./ui/Modal";
 import Card from "./ui/Card";
+import Spinner from "./ui/Spinner";
 
 export default function FraudAlerts() {
   const [alerts, setAlerts] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(true);
   const seenRef = useRef(new Set());
   const containerRef = useRef(null);
 
@@ -23,6 +25,8 @@ export default function FraudAlerts() {
         setAlerts(sorted);
       } catch (e) {
         console.error(e);
+      } finally {
+        setLoading(false); // stop spinner after first load
       }
     };
 
@@ -47,29 +51,36 @@ export default function FraudAlerts() {
   return (
     <div className="md:col-span-2">
       <Card title="🚨 Suspicious Transaction Monitoring">
-        <div
-          ref={containerRef}
-          className="max-h-[450px] overflow-y-auto"
-        >
-          {/* Header */}
-          <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 border-b pb-2 sticky top-0 bg-white z-10">
-            <div>Account</div>
-            <div>Transaction</div>
-            <div>Reason</div>
-            <div>Time</div>
-          </div>
+        {loading ? (
+          <Spinner label="Connecting to fraud stream…" />
+        ) : alerts.length === 0 ? (
+          <p className="text-sm text-gray-400 py-6 text-center">
+            No suspicious activity detected
+          </p>
+        ) : (
+          <div
+            ref={containerRef}
+            className="max-h-[450px] overflow-y-auto"
+          >
+            {/* Header */}
+            <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 border-b pb-2 sticky top-0 bg-white z-10">
+              <div>Account</div>
+              <div>Transaction</div>
+              <div>Reason</div>
+              <div>Time</div>
+            </div>
 
-          {/* Rows */}
-          <div className="divide-y">
-            {alerts.map((a) => {
-              const animate = isNew(a);
+            {/* Rows */}
+            <div className="divide-y">
+              {alerts.map((a) => {
+                const animate = isNew(a);
 
-              return (
-                <div
-                  key={`${a.transactionId}-${a.detectedAt}`}
-                  onClick={() => setSelected(a)}
-                  tabIndex={0}
-                  className={`
+                return (
+                  <div
+                    key={`${a.transactionId}-${a.detectedAt}`}
+                    onClick={() => setSelected(a)}
+                    tabIndex={0}
+                    className={`
                     grid grid-cols-4 gap-4 py-3 text-sm items-center
                     cursor-pointer transition
                     hover:bg-gray-100
@@ -77,27 +88,28 @@ export default function FraudAlerts() {
                     ${severityBg(a.reason)}
                     ${animate ? "animate-slide-in" : ""}
                   `}
-                >
-                  <div className="font-medium">{a.accountId}</div>
+                  >
+                    <div className="font-medium">{a.accountId}</div>
 
-                  <div className="text-gray-600">
-                    {a.transactionId || "—"}
-                  </div>
+                    <div className="text-gray-600">
+                      {a.transactionId || "—"}
+                    </div>
 
-                  <div>
-                    <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full">
-                      {a.reason}
-                    </span>
-                  </div>
+                    <div>
+                      <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full">
+                        {a.reason}
+                      </span>
+                    </div>
 
-                  <div className="text-gray-500">
-                    {new Date(a.detectedAt).toLocaleString()}
+                    <div className="text-gray-500">
+                      {new Date(a.detectedAt).toLocaleString()}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </Card>
 
       {/* MODAL */}
