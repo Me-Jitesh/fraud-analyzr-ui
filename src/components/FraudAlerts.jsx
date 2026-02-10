@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import api from "../api/axios";
 import Modal from "./ui/Modal";
 import Card from "./ui/Card";
-import Spinner from "./ui/Spinner";
+import FraudSkeleton from "./ui/FraudSkeleton";
 
 export default function FraudAlerts() {
   const [alerts, setAlerts] = useState([]);
@@ -52,7 +52,7 @@ export default function FraudAlerts() {
     <div className="md:col-span-2">
       <Card title="🚨 Suspicious Transaction Monitoring">
         {loading ? (
-          <Spinner label="Connecting to fraud stream…" />
+          <FraudSkeleton />
         ) : alerts.length === 0 ? (
           <p className="text-sm text-gray-400 py-6 text-center">
             No suspicious activity detected
