@@ -11,9 +11,9 @@ export default function Header({ pulse }) {
       <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
 
         <ShieldExclamationIcon
-          className={`w-8 h-8 text-slate-700 ${pulse ? "animate-pulse" : ""}`}
+          className={`w-8 h-8 ${pulse ? "text-sky-600" : "text-slate-700"
+            }`}
         />
-
 
         FRAUD DETECTION
 
