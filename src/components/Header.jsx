@@ -37,7 +37,7 @@ export default function Header({ pulse }) {
         <span className="text-xs font-medium px-3 py-1 rounded-full
   bg-gradient-to-r from-gray-700 to-sky-300
   text-white/90 shadow-sm">
-          Kafka • Spring Boot • React
+          Kafka • Java • Spring Boot • React
         </span>
       </div>
     </div>
