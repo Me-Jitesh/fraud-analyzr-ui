@@ -1,5 +1,7 @@
 import { useState } from "react";
 import api from "../api/axios";
+import StreamingWave from "./ui/StreamingWave";
+
 
 export default function TransactionForm() {
   const [loading, setLoading] = useState(false);
@@ -134,9 +136,14 @@ export default function TransactionForm() {
                 </p>
               </div>
 
-              <div className="text-4xl opacity-70 group-hover:opacity-100 transition">
-                ⚡
-              </div>
+              {loading ? (
+                <StreamingWave active={true} />
+              ) : (
+                <div className="text-3xl opacity-70 mt-4 group-hover:opacity-100 transition">
+                  ⚡
+                </div>
+              )}
+
             </div>
           </div>
 
@@ -170,6 +177,8 @@ export default function TransactionForm() {
               >
                 Run
               </button>
+
+              {loading && <StreamingWave active={true} />}
 
             </div>
 
