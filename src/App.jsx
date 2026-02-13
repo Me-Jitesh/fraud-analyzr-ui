@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import Header from "./components/Header";
 import StreamStatus from "./components/StreamStatus";
 import FraudAlerts from "./components/FraudAlerts";
@@ -18,6 +19,7 @@ export default function App() {
           <FraudAlerts />
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }
