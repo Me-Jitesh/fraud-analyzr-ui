@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import api from "../api/axios";
 import Modal from "./ui/Modal";
 import Card from "./ui/Card";
 import FraudSkeleton from "./ui/FraudSkeleton";
 
+const MAX_ALERTS = 400;
+
 export default function FraudAlerts() {
   const [alerts, setAlerts] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const seenRef = useRef(new Set());
   const containerRef = useRef(null);
 
@@ -17,16 +20,40 @@ export default function FraudAlerts() {
         const res = await api.get("/api/v1/fraud/alerts");
         const data = Array.isArray(res.data) ? res.data : [];
 
-        // latest on top
         const sorted = [...data].sort(
           (a, b) => new Date(b.detectedAt) - new Date(a.detectedAt)
         );
 
-        setAlerts(sorted);
+        setAlerts((prev) => {
+          const newItems = [];
+
+          for (const a of sorted) {
+            const key = `${a.accountId}-${a.transactionId}-${a.detectedAt}`;
+
+            if (!seenRef.current.has(key)) {
+              seenRef.current.add(key);
+              newItems.push({ ...a, isNew: true });
+            } else {
+              break; // stop early once we hit known items
+            }
+          }
+
+          if (newItems.length === 0) return prev;
+
+          // remove old isNew flags
+          const cleanedPrev = prev.map((p) => ({
+            ...p,
+            isNew: false,
+          }));
+
+          const updated = [...newItems, ...cleanedPrev];
+
+          return updated.slice(0, MAX_ALERTS);
+        });
       } catch (e) {
         console.error(e);
       } finally {
-        setLoading(false); // stop spinner after first load
+        setLoading(false);
       }
     };
 
@@ -35,13 +62,7 @@ export default function FraudAlerts() {
     return () => clearInterval(id);
   }, []);
 
-  const isNew = (a) => {
-    const key = `${a.accountId}-${a.transactionId}-${a.detectedAt}`;
-    if (seenRef.current.has(key)) return false;
-    seenRef.current.add(key);
-    return true;
-  };
-
+  // Auto-scroll to top when new alerts come
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = 0;
@@ -73,38 +94,14 @@ export default function FraudAlerts() {
             {/* Rows */}
             <div className="divide-y">
               {alerts.map((a) => {
-                const animate = isNew(a);
+                const key = `${a.accountId}-${a.transactionId}-${a.detectedAt}`;
 
                 return (
-                  <div
-                    key={`${a.transactionId}-${a.detectedAt}`}
+                  <AlertRow
+                    key={key}
+                    alert={a}
                     onClick={() => setSelected(a)}
-                    tabIndex={0}
-                    className={`
-                    grid grid-cols-4 gap-4 py-3 text-sm items-center
-                    cursor-pointer transition
-                    hover:bg-gray-100
-                    focus:ring-2 focus:ring-red-300
-                    ${severityBg(a.reason)}
-                    ${animate ? "animate-slide-in" : ""}
-                  `}
-                  >
-                    <div className="font-medium">{a.accountId}</div>
-
-                    <div className="text-gray-600">
-                      {a.transactionId || "—"}
-                    </div>
-
-                    <div>
-                      <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full">
-                        {a.reason}
-                      </span>
-                    </div>
-
-                    <div className="text-gray-500">
-                      {new Date(a.detectedAt).toLocaleString()}
-                    </div>
-                  </div>
+                  />
                 );
               })}
             </div>
@@ -135,6 +132,39 @@ export default function FraudAlerts() {
     </div>
   );
 }
+
+const AlertRow = React.memo(({ alert, onClick }) => {
+  return (
+    <div
+      onClick={onClick}
+      tabIndex={0}
+      className={`
+        grid grid-cols-4 gap-4 py-3 text-sm items-center
+        cursor-pointer transition
+        hover:bg-gray-100
+        focus:ring-2 focus:ring-red-300
+        ${severityBg(alert.reason)}
+        ${alert.isNew ? "animate-slide-in" : ""}
+      `}
+    >
+      <div className="font-medium">{alert.accountId}</div>
+
+      <div className="text-gray-600">
+        {alert.transactionId || "—"}
+      </div>
+
+      <div>
+        <span className="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-full">
+          {alert.reason}
+        </span>
+      </div>
+
+      <div className="text-gray-500">
+        {new Date(alert.detectedAt).toLocaleString()}
+      </div>
+    </div>
+  );
+});
 
 const Detail = ({ label, value }) => (
   <div className="flex justify-between border-b pb-1">
