@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, memo } from "react";
+import { List } from "react-window";
 import api from "../api/axios";
 import Modal from "./ui/Modal";
 import Card from "./ui/Card";
 import FraudSkeleton from "./ui/FraudSkeleton";
 
 const MAX_ALERTS = 400;
+const ROW_HEIGHT = 64;
 
 export default function FraudAlerts() {
   const [alerts, setAlerts] = useState([]);
@@ -12,7 +14,7 @@ export default function FraudAlerts() {
   const [loading, setLoading] = useState(true);
 
   const seenRef = useRef(new Set());
-  const containerRef = useRef(null);
+  const listRef = useRef(null);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -34,13 +36,12 @@ export default function FraudAlerts() {
               seenRef.current.add(key);
               newItems.push({ ...a, isNew: true });
             } else {
-              break; // stop early once we hit known items
+              break;
             }
           }
 
           if (newItems.length === 0) return prev;
 
-          // remove old isNew flags
           const cleanedPrev = prev.map((p) => ({
             ...p,
             isNew: false,
@@ -51,7 +52,7 @@ export default function FraudAlerts() {
           return updated.slice(0, MAX_ALERTS);
         });
       } catch (e) {
-        console.error(e);
+        console.error("Fraud API error:", e);
       } finally {
         setLoading(false);
       }
@@ -62,10 +63,10 @@ export default function FraudAlerts() {
     return () => clearInterval(id);
   }, []);
 
-  // Auto-scroll to top when new alerts come
+  // Auto scroll to top when new alerts arrive
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = 0;
+    if (listRef.current) {
+      listRef.current.scrollTo({ top: 0 });
     }
   }, [alerts.length]);
 
@@ -79,37 +80,34 @@ export default function FraudAlerts() {
             No suspicious activity detected
           </p>
         ) : (
-          <div
-            ref={containerRef}
-            className="max-h-[450px] overflow-y-auto"
-          >
-            {/* Header */}
-            <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 border-b pb-2 sticky top-0 bg-white z-10">
+          <div className="h-[450px]">
+
+            {/* Sticky Header */}
+            <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 border-b pb-2 bg-white sticky top-0 z-10 px-2">
               <div>Account</div>
               <div>Transaction</div>
               <div>Reason</div>
               <div>Time</div>
             </div>
 
-            {/* Rows */}
-            <div className="divide-y">
-              {alerts.map((a) => {
-                const key = `${a.accountId}-${a.transactionId}-${a.detectedAt}`;
-
-                return (
-                  <AlertRow
-                    key={key}
-                    alert={a}
-                    onClick={() => setSelected(a)}
-                  />
-                );
-              })}
-            </div>
+            {/* Virtualized List */}
+            <List
+              ref={listRef}
+              rowCount={alerts.length}
+              rowHeight={ROW_HEIGHT}
+              height={400}
+              width="100%"
+              rowComponent={VirtualRow}
+              rowProps={{
+                alerts,
+                setSelected,
+              }}
+            />
           </div>
         )}
       </Card>
 
-      {/* MODAL */}
+      {/* Modal */}
       <Modal
         open={!!selected}
         onClose={() => setSelected(null)}
@@ -133,13 +131,26 @@ export default function FraudAlerts() {
   );
 }
 
-const AlertRow = React.memo(({ alert, onClick }) => {
+const VirtualRow = memo(({ index, style, alerts, setSelected }) => {
+  const alert = alerts[index];
+
+  return (
+    <div style={style}>
+      <AlertRow
+        alert={alert}
+        onClick={() => setSelected(alert)}
+      />
+    </div>
+  );
+});
+
+const AlertRow = memo(({ alert, onClick }) => {
   return (
     <div
       onClick={onClick}
       tabIndex={0}
       className={`
-        grid grid-cols-4 gap-4 py-3 text-sm items-center
+        grid grid-cols-4 gap-4 py-3 px-2 text-sm items-center
         cursor-pointer transition
         hover:bg-gray-100
         focus:ring-2 focus:ring-red-300
