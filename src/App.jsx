@@ -1,9 +1,9 @@
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import Header from "./components/Header";
 import StreamStatus from "./components/StreamStatus";
 import FraudAlerts from "./components/FraudAlerts";
 import TransactionForm from "./components/TransactionForm";
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function App() {
   return (
