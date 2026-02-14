@@ -65,8 +65,13 @@ export default function FraudAlerts() {
 
   // Auto scroll to top when new alerts arrive
   useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollTo({ top: 0 });
+    const list = listRef.current;
+    if (!list) return;
+
+    const currentScroll = list.getScrollOffset?.() ?? 0;
+
+    if (currentScroll < 50) {
+      list.scrollTo({ top: 0 });
     }
   }, [alerts.length]);
 
