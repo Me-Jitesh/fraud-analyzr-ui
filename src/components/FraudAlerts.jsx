@@ -190,7 +190,10 @@ const Detail = ({ label, value }) => (
 );
 
 const severityBg = (reason = "") => {
-  if (reason.includes("HIGH")) return "bg-red-50";
-  if (reason.includes("MEDIUM")) return "bg-yellow-50";
-  return "bg-gray-50";
-};
+  const r = reason?.toUpperCase();
+
+    if (r.includes("HIGH_AMOUNT")) return "bg-red-50";
+      if (r.includes("HIGH_VELOCITY")) return "bg-orange-50";
+
+        return "bg-gray-50";
+  };
