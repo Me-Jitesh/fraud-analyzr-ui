@@ -2,7 +2,6 @@ import { useState } from "react";
 import api from "../api/axios";
 import StreamingWave from "./ui/StreamingWave";
 
-
 export default function TransactionForm() {
   const [loading, setLoading] = useState(false);
   const [bulkCount, setBulkCount] = useState(20);
@@ -71,26 +70,51 @@ export default function TransactionForm() {
 
   return (
     <div className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-xl p-6 shadow-sm space-y-6">
-
       <h2 className="text-lg font-semibold text-gray-800">
         Simulate Transaction
       </h2>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-        <input name="transactionId" placeholder="Transaction ID"
-          className="input" onChange={handleChange} required />
+        <input
+          name="transactionId"
+          placeholder="Transaction ID"
+          className="input"
+          onChange={handleChange}
+          required
+        />
 
-        <input name="accountId" placeholder="Account ID"
-          className="input" onChange={handleChange} required />
+        <input
+          name="accountId"
+          placeholder="Account ID"
+          className="input"
+          onChange={handleChange}
+          required
+        />
 
-        <input name="amount" type="number" placeholder="Amount"
-          className="input" onChange={handleChange} required />
+        <input
+          name="amount"
+          type="number"
+          placeholder="Amount"
+          className="input"
+          onChange={handleChange}
+          required
+        />
 
-        <input name="location" placeholder="Location"
-          className="input" onChange={handleChange} required />
+        <input
+          name="location"
+          placeholder="Location"
+          className="input"
+          onChange={handleChange}
+          required
+        />
 
-        <input name="merchant" placeholder="Merchant"
-          className="input" onChange={handleChange} required />
+        <input
+          name="merchant"
+          placeholder="Merchant"
+          className="input"
+          onChange={handleChange}
+          required
+        />
 
         <select name="type" className="input" onChange={handleChange}>
           <option>UPI</option>
@@ -110,13 +134,11 @@ export default function TransactionForm() {
         </div>
       </form>
       <div className="border-t pt-6 space-y-6">
-
         <h3 className="text-sm font-semibold text-slate-600 tracking-wide uppercase">
           Bulk Transaction Simulation
         </h3>
 
         <div className="grid md:grid-cols-2 gap-4">
-
           {/* Generate 10 Card */}
           <div
             onClick={!loading ? handleBulk10 : undefined}
@@ -143,14 +165,14 @@ export default function TransactionForm() {
                   ⚡
                 </div>
               )}
-
             </div>
           </div>
 
           {/* Generate N Card */}
-          <div className="rounded-xl border border-gray-200 
-        bg-white p-5 shadow-sm hover:shadow-md transition">
-
+          <div
+            className="rounded-xl border border-gray-200 
+        bg-white p-5 shadow-sm hover:shadow-md transition"
+          >
             <p className="text-xs uppercase tracking-wider text-slate-500">
               Custom Load
             </p>
@@ -160,7 +182,6 @@ export default function TransactionForm() {
             </p>
 
             <div className="flex flex-wrap items-center gap-3 mt-4">
-
               <input
                 type="number"
                 value={bulkCount}
@@ -179,11 +200,8 @@ export default function TransactionForm() {
               </button>
 
               {loading && <StreamingWave active={true} />}
-
             </div>
-
           </div>
-
         </div>
       </div>
 

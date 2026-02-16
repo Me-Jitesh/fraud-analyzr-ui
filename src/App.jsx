@@ -1,5 +1,5 @@
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import Header from "./components/Header";
 import StreamStatus from "./components/StreamStatus";
 import FraudAlerts from "./components/FraudAlerts";
