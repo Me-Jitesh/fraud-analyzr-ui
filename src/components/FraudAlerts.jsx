@@ -4,6 +4,10 @@ import api from "../api/axios";
 import Modal from "./ui/Modal";
 import Card from "./ui/Card";
 import FraudSkeleton from "./ui/FraudSkeleton";
+import {
+  ExclamationTriangleIcon,
+  BanknotesIcon,
+} from "@heroicons/react/24/outline";
 
 const MAX_ALERTS = 400;
 const ROW_HEIGHT = 68;
@@ -76,7 +80,14 @@ export default function FraudAlerts() {
 
   return (
     <div className="md:col-span-2">
-      <Card title="🚨 Suspicious Transaction Monitoring">
+      <Card
+        title={
+          <div className="flex items-center gap-2 uppercase">
+            <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />
+            <span>Suspicious Transaction Monitoring</span>
+          </div>
+        }
+      >
         {loading ? (
           <FraudSkeleton />
         ) : alerts.length === 0 ? (
@@ -112,7 +123,12 @@ export default function FraudAlerts() {
       <Modal
         open={!!selected}
         onClose={() => setSelected(null)}
-        title="🚨 Transaction Details"
+        title={
+          <div className="flex items-center gap-2 uppercase">
+            <BanknotesIcon className="w-5 h-5 text-orange-600" />
+            <span>Transaction Details</span>
+          </div>
+        }
       >
         {selected && (
           <div className="space-y-2 text-xs">

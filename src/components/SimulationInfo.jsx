@@ -1,3 +1,11 @@
+import {
+  Cog6ToothIcon,
+  CreditCardIcon,
+  BoltIcon,
+  AdjustmentsHorizontalIcon,
+  ChevronDownIcon,
+} from "@heroicons/react/24/outline";
+
 export default function SimulationInfo() {
   return (
     <div
@@ -6,39 +14,52 @@ export default function SimulationInfo() {
     >
       <details className="group p-4">
         <summary
-          className="cursor-pointer font-semibold text-gray-700 
-                            flex justify-between items-center"
+          className="cursor-pointer font-semibold text-gray-800 
+                            flex justify-between items-center list-none"
         >
-          📘 SIMULATION USER MANUAL
-          <span
-            className="transition-transform duration-300 
-                           group-open:rotate-180"
-          >
-            ▼
-          </span>
-          l̥
+          <div className="flex items-center gap-2">
+            <Cog6ToothIcon className="w-5 h-5 text-gray-600" />
+            SIMULATION USER MANUAL
+          </div>
+
+          <ChevronDownIcon
+            className="w-5 h-5 text-gray-500 transition-transform duration-300 
+                       group-open:rotate-180"
+          />
         </summary>
 
         <div className="mt-6 space-y-6">
+          {/* Pay */}
           <div>
-            <h4 className="font-medium text-blue-600">💳 Pay Simulation</h4>
-            <ul className="list-disc ml-5 text-gray-600 space-y-1 text-sm">
-              <li>Makes a single payment</li>
+            <div className="flex items-center gap-2 mb-2">
+              <CreditCardIcon className="w-5 h-5 text-blue-600" />
+              <h4 className="font-medium text-blue-600">Pay Simulation</h4>
+            </div>
+            <ul className="list-disc ml-7 text-gray-600 space-y-1 text-sm">
+              <li>Makes a single transaction</li>
               <li>Used to test HIGH_AMOUNT detection logic</li>
             </ul>
           </div>
 
+          {/* Quick Load */}
           <div>
-            <h4 className="font-medium text-blue-600">📦 Quick Load</h4>
-            <ul className="list-disc ml-5 text-gray-600 space-y-1 text-sm">
-              <li>Simulates 10 Rapid transactions at once</li>
+            <div className="flex items-center gap-2 mb-2">
+              <BoltIcon className="w-5 h-5 text-blue-600" />
+              <h4 className="font-medium text-blue-600">Quick Load</h4>
+            </div>
+            <ul className="list-disc ml-7 text-gray-600 space-y-1 text-sm">
+              <li>Simulates 10 rapid transactions</li>
               <li>Used to test HIGH_VELOCITY scenarios</li>
             </ul>
           </div>
 
+          {/* Custom Load */}
           <div>
-            <h4 className="font-medium text-blue-600">⚙ Custom Load</h4>
-            <ul className="list-disc ml-5 text-gray-600 space-y-1 text-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <AdjustmentsHorizontalIcon className="w-5 h-5 text-blue-600" />
+              <h4 className="font-medium text-blue-600">Custom Load</h4>
+            </div>
+            <ul className="list-disc ml-7 text-gray-600 space-y-1 text-sm">
               <li>Allows custom number of transactions</li>
               <li>Best for stress testing fraud rules</li>
             </ul>

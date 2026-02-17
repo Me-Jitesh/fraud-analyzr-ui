@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../api/axios";
 import StreamingWave from "./ui/StreamingWave";
+import { CreditCardIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 
 export default function TransactionForm() {
   const [payLoading, setPayLoading] = useState(false);
@@ -74,8 +75,9 @@ export default function TransactionForm() {
 
   return (
     <div className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-xl p-6 shadow-sm space-y-6">
-      <h2 className="text-lg font-semibold text-gray-800">
-        Simulate Transaction
+      <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800">
+        <CreditCardIcon className="w-5 h-5 text-gray-600" />
+        <span>SIMULATE TRANSACTION</span>
       </h2>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
@@ -164,9 +166,10 @@ export default function TransactionForm() {
         </div>
       </form>
       <div className="border-t pt-6 space-y-6">
-        <h3 className="text-sm font-semibold text-slate-600 tracking-wide uppercase">
-          Bulk Transaction Simulation
-        </h3>
+        <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-600 tracking-wide uppercase">
+          <Squares2X2Icon className="w-5 h-5 text-gray-600" />
+          <span>Bulk Transaction Simulation</span>
+        </h2>
 
         <div className="grid md:grid-cols-2 gap-4">
           {/* Generate 10 Card */}
