@@ -6,7 +6,7 @@ import Card from "./ui/Card";
 import FraudSkeleton from "./ui/FraudSkeleton";
 
 const MAX_ALERTS = 400;
-const ROW_HEIGHT = 64;
+const ROW_HEIGHT = 68;
 
 export default function FraudAlerts() {
   const [alerts, setAlerts] = useState([]);
@@ -80,16 +80,17 @@ export default function FraudAlerts() {
         {loading ? (
           <FraudSkeleton />
         ) : alerts.length === 0 ? (
-          <p className="text-sm text-gray-400 py-6 text-center">
+          <p className="text-xs text-gray-400 py-6 text-center">
             No suspicious activity detected
           </p>
         ) : (
           <div className="h-[450px]">
-            <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 border-b pb-2 bg-white sticky top-0 z-10 px-2">
+            <div className="grid grid-cols-5 gap-4 text-[11px] text-gray-400 border-b pb-2 bg-white sticky top-0 z-10 px-2">
               <div>Account</div>
               <div>Transaction</div>
-              <div>Reason</div>
-              <div>Time</div>
+              <div className="text-center">Reason</div>
+              <div className="text-center">Risk Score</div>
+              <div className="text-center">Time</div>
             </div>
 
             <List
@@ -114,7 +115,7 @@ export default function FraudAlerts() {
         title="🚨 Transaction Details"
       >
         {selected && (
-          <div className="space-y-3 text-sm">
+          <div className="space-y-2 text-xs">
             <Detail label="Account ID" value={selected.accountId} />
             <Detail
               label="Transaction ID"
@@ -123,6 +124,7 @@ export default function FraudAlerts() {
             <Detail label="Merchant" value={selected.merchant || "Unknown"} />
             <Detail label="Amount" value={`₹ ${selected.amount}`} />
             <Detail label="Reason" value={selected.reason} />
+            <Detail label="Risk Score" value={selected.riskScore ?? "—"} />
             <Detail
               label="Detected At"
               value={new Date(selected.detectedAt).toLocaleString()}
@@ -153,22 +155,28 @@ const AlertRow = memo(({ alert, onClick }) => {
       onClick={onClick}
       tabIndex={0}
       className={`
-grid grid-cols-4 
-gap-4 py-3 
-px-2 text-sm 
-items-center 
-cursor-pointer 
-transition hover:bg-gray-100 
-focus:ring-2 focus:ring-blue-300 
-${severityBg(alert.reason)}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ${alert.isNew ? "animate-slide-in" : ""}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  `}
+grid grid-cols-5
+gap-3
+py-2
+px-2
+text-[12px]
+items-center
+cursor-pointer
+transition hover:bg-gray-100
+focus:ring-2 focus:ring-blue-300
+${severityBg(alert.reason)}
+${alert.isNew ? "animate-slide-in" : ""}
+`}
     >
-      <div className="font-medium">{alert.accountId}</div>
+      <div className="text-[11px]">{alert.accountId}</div>
 
-      <div className="text-gray-600">{alert.transactionId || "—"}</div>
+      <div className="text-gray-600 text-[10px]">
+        {alert.transactionId || "—"}
+      </div>
 
-      <div>
+      <div className="flex justify-center">
         <span
-          className={`text-xs px-3 py-1 rounded-full ${
+          className={`text-[9px] px-2 py-0.5 rounded-full leading-tight whitespace-nowrap ${
             isHighAmount
               ? "bg-red-100 text-red-600"
               : isHighVelocity
@@ -180,7 +188,11 @@ ${severityBg(alert.reason)}                                                     
         </span>
       </div>
 
-      <div className="text-gray-500">
+      <div className="font-semibold text-orange-400 text-[13px] text-center">
+        {alert.riskScore ?? "—"}
+      </div>
+
+      <div className="text-gray-500 text-[10px]">
         {new Date(alert.detectedAt).toLocaleString()}
       </div>
     </div>
