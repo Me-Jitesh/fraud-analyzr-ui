@@ -15,17 +15,7 @@ export default function App() {
           <div className="space-y-6">
             <StreamStatus />
             <TransactionForm />
-
-            <div className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-xl p-2 shadow-sm space-y-6">
-              <details className="p-4">
-                <summary className="cursor-pointer font-semibold text-gray-700">
-                  📘 SIMULATION USER MANUAL
-                </summary>
-                <div className="mt-4">
-                  <SimulationInfo />
-                </div>
-              </details>
-            </div>
+            <SimulationInfo />
           </div>
           <FraudAlerts />
         </div>
