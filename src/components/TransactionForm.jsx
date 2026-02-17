@@ -3,7 +3,9 @@ import api from "../api/axios";
 import StreamingWave from "./ui/StreamingWave";
 
 export default function TransactionForm() {
-  const [loading, setLoading] = useState(false);
+  const [payLoading, setPayLoading] = useState(false);
+  const [bulkLoading, setBulkLoading] = useState(false);
+  const [customLoading, setCustomLoading] = useState(false);
   const [bulkCount, setBulkCount] = useState(20);
   const [message, setMessage] = useState("");
 
@@ -24,7 +26,7 @@ export default function TransactionForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      setPayLoading(true);
 
       const payload = {
         ...form,
@@ -38,33 +40,33 @@ export default function TransactionForm() {
     } catch (err) {
       setMessage("Transaction Failed");
     } finally {
-      setLoading(false);
+      setPayLoading(false);
     }
   };
 
   // Bulk 10
   const handleBulk10 = async () => {
     try {
-      setLoading(true);
+      setBulkLoading(true);
       const res = await api.post("/api/v1/txn/pay/bulk");
       setMessage(res.data);
     } catch {
       setMessage("Bulk Transaction Failed");
     } finally {
-      setLoading(false);
+      setBulkLoading(false);
     }
   };
 
   // Bulk N
   const handleBulkN = async () => {
     try {
-      setLoading(true);
+      setCustomLoading(true);
       const res = await api.post(`/api/v1/txn/pay/bulk/${bulkCount}`);
       setMessage(res.data);
     } catch {
       setMessage("Bulk N Transaction Failed");
     } finally {
-      setLoading(false);
+      setCustomLoading(false);
     }
   };
 
@@ -76,16 +78,16 @@ export default function TransactionForm() {
 
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         <input
-          name="transactionId"
-          placeholder="Transaction ID"
+          name="accountId"
+          placeholder="Account ID"
           className="input"
           onChange={handleChange}
           required
         />
 
         <input
-          name="accountId"
-          placeholder="Account ID"
+          name="transactionId"
+          placeholder="Transaction ID"
           className="input"
           onChange={handleChange}
           required
@@ -123,14 +125,18 @@ export default function TransactionForm() {
           <option>Wallet</option>
         </select>
 
-        <div className="col-span-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition w-full"
-          >
-            {loading ? "Processing..." : "Submit Transaction"}
-          </button>
+        <div className="col-span-2 flex justify-center">
+          {payLoading ? (
+            <StreamingWave active={true} />
+          ) : (
+            <button
+              type="submit"
+              disabled={payLoading}
+              className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition w-full"
+            >
+              Submit Transaction
+            </button>
+          )}
         </div>
       </form>
       <div className="border-t pt-6 space-y-6">
@@ -141,12 +147,12 @@ export default function TransactionForm() {
         <div className="grid md:grid-cols-2 gap-4">
           {/* Generate 10 Card */}
           <div
-            onClick={!loading ? handleBulk10 : undefined}
+            onClick={!bulkLoading ? handleBulk10 : undefined}
             className={`group cursor-pointer rounded-xl border border-gray-200 
       bg-gradient-to-br from-gray-900 to-slate-800 
       text-white p-5 shadow-md transition 
       hover:shadow-xl hover:scale-[1.02] active:scale-[0.99]
-      ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
+      ${bulkLoading ? "opacity-60 cursor-not-allowed" : ""}`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -158,10 +164,10 @@ export default function TransactionForm() {
                 </p>
               </div>
 
-              {loading ? (
+              {bulkLoading ? (
                 <StreamingWave active={true} />
               ) : (
-                <div className="text-3xl opacity-70 mt-4 group-hover:opacity-100 transition">
+                <div className="text-4xl opacity-70 mt-4 group-hover:opacity-100 transition">
                   ⚡
                 </div>
               )}
@@ -190,16 +196,18 @@ export default function TransactionForm() {
     rounded-lg text-sm focus:ring-2 focus:ring-sky-400"
               />
 
-              <button
-                onClick={handleBulkN}
-                disabled={loading}
-                className="whitespace-nowrap bg-sky-600 text-white px-4 py-2 
+              {customLoading ? (
+                <StreamingWave active={true} />
+              ) : (
+                <button
+                  onClick={handleBulkN}
+                  disabled={customLoading}
+                  className="whitespace-nowrap bg-sky-600 text-white px-4 py-2 
     rounded-lg hover:bg-sky-500 transition disabled:opacity-60"
-              >
-                Run
-              </button>
-
-              {loading && <StreamingWave active={true} />}
+                >
+                  Run
+                </button>
+              )}
             </div>
           </div>
         </div>
