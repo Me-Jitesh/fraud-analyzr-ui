@@ -18,6 +18,8 @@ export default function TransactionForm() {
     type: "UPI",
   });
 
+  const amount = Number(form.amount);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -93,14 +95,36 @@ export default function TransactionForm() {
           required
         />
 
-        <input
-          name="amount"
-          type="number"
-          placeholder="Amount"
-          className="input"
-          onChange={handleChange}
-          required
-        />
+        <div className="relative">
+          <div className="flex items-center gap-2">
+            <input
+              name="amount"
+              type="number"
+              placeholder="Amount"
+              className={`input ${
+                amount > 400000 ? "border-red-400 focus:ring-red-400" : ""
+              }`}
+              onChange={handleChange}
+              required
+            />
+
+            {amount > 400000 && (
+              <div className="relative group cursor-pointer">
+                <span className="text-red-500 font-bold">ⓘ</span>
+
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 -top-9 
+          bg-red-500 text-white text-xs px-3 py-1 
+          rounded-md shadow-md opacity-0 
+          group-hover:opacity-100 transition 
+          whitespace-nowrap z-10"
+                >
+                  This transaction may be flagged as SUSPICIOUS
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
         <input
           name="location"
