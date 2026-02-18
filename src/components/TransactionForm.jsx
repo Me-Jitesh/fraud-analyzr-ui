@@ -166,7 +166,7 @@ export default function TransactionForm() {
         </div>
       </form>
       <div className="border-t pt-6 space-y-6">
-        <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-600 tracking-wide uppercase">
+        <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-800 tracking-wide uppercase">
           <Squares2X2Icon className="w-5 h-5 text-gray-600" />
           <span>Bulk Transaction Simulation</span>
         </h2>

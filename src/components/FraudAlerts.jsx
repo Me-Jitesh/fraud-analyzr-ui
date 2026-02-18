@@ -93,7 +93,7 @@ export default function FraudAlerts() {
     <div className="md:col-span-2">
       <Card
         title={
-          <div className="flex items-center gap-2 uppercase">
+          <div className="flex items-center text-sm font-semibold text-gray-800 gap-2 uppercase">
             <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />
 
             <span>Suspicious Transaction Monitoring</span>
@@ -107,7 +107,7 @@ export default function FraudAlerts() {
               ) : (
                 <SpeakerXMarkIcon className="w-4 h-4 text-gray-400" />
               )}
-              {soundEnabled ? "Sound ON" : "Sound OFF"}
+              {soundEnabled ? "ON" : "OFF"}
             </button>
           </div>
         }
