@@ -10,7 +10,7 @@ export default function Header({ status = "UP" }) {
         ${isUp ? "animate-header-glow" : ""}
       `}
     >
-      <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-3">
         <ShieldExclamationIcon
           className={`w-8 h-8 ${isUp ? "text-slate-700" : "text-red-600"}`}
         />

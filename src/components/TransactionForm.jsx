@@ -75,7 +75,7 @@ export default function TransactionForm() {
 
   return (
     <div className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-xl p-6 shadow-sm space-y-6">
-      <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800">
+      <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-800">
         <CreditCardIcon className="w-5 h-5 text-gray-600" />
         <span>SIMULATE TRANSACTION</span>
       </h2>
@@ -186,7 +186,7 @@ export default function TransactionForm() {
                 <p className="text-xs uppercase tracking-wider text-gray-300">
                   Quick Load
                 </p>
-                <p className="text-lg font-semibold mt-1">
+                <p className="text-sm font-semibold mt-5">
                   Generate 10 Random Transactions
                 </p>
               </div>
@@ -194,7 +194,7 @@ export default function TransactionForm() {
               {bulkLoading ? (
                 <StreamingWave active={true} />
               ) : (
-                <div className="text-4xl opacity-70 mt-4 group-hover:opacity-100 transition">
+                <div className="text-4xl opacity-70 mt-5 group-hover:opacity-100 transition">
                   ⚡
                 </div>
               )}
@@ -210,7 +210,7 @@ export default function TransactionForm() {
               Custom Load
             </p>
 
-            <p className="text-lg font-semibold mt-1 text-slate-800">
+            <p className="text-sm font-semibold mt-1 text-slate-800">
               Generate N Transactions
             </p>
 

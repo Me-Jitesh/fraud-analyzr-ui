@@ -43,7 +43,7 @@ export default function StreamStatus({ onStatusChange }) {
   return (
     <Card
       title={
-        <div className="flex items-center gap-2 uppercase">
+        <div className="flex items-center text-sm gap-2 uppercase">
           <SignalIcon className="w-5 h-5 text-gray-600" />
           <span>Stream Status</span>
         </div>

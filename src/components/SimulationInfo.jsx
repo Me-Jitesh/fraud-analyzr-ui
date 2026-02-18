@@ -17,7 +17,7 @@ export default function SimulationInfo() {
           className="cursor-pointer font-semibold text-gray-800 
                             flex justify-between items-center list-none"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-sm">
             <Cog6ToothIcon className="w-5 h-5 text-gray-600" />
             SIMULATION USER MANUAL
           </div>
