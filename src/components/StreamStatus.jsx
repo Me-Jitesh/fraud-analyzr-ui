@@ -3,7 +3,7 @@ import api from "../api/axios";
 import Card from "./ui/Card";
 import { SignalIcon } from "@heroicons/react/24/outline";
 
-export default function StreamStatus() {
+export default function StreamStatus({ onStatusChange }) {
   const [status, setStatus] = useState("UNKNOWN");
   const [events, setEvents] = useState(0);
   const [updatedAt, setUpdatedAt] = useState(null);
@@ -13,22 +13,32 @@ export default function StreamStatus() {
       api
         .get("/api/v1/stream/status")
         .then((res) => {
-          setStatus(res.data.status || "RUNNING");
+          const newStatus = res.data.status || "RUNNING";
+
+          setStatus(newStatus);
           setEvents(res.data.processedEvents || 0);
+
           setUpdatedAt(
             res.data.lastUpdated
               ? new Date(res.data.lastUpdated).toLocaleString()
               : new Date().toLocaleString(),
           );
+
+          if (onStatusChange) {
+            onStatusChange(newStatus === "RUNNING" ? "UP" : "DOWN");
+          }
         })
-        .catch(console.error);
+        .catch(() => {
+          setStatus("DOWN");
+          if (onStatusChange) onStatusChange("DOWN");
+        });
     };
 
     fetchStatus();
-    const interval = setInterval(fetchStatus, 5000); // polling
+    const interval = setInterval(fetchStatus, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [onStatusChange]);
 
   return (
     <Card
