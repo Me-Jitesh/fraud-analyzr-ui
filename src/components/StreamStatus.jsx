@@ -14,8 +14,12 @@ export default function StreamStatus() {
         .get("/api/v1/stream/status")
         .then((res) => {
           setStatus(res.data.status || "RUNNING");
-          setEvents(res.data.processedTransactions || 0);
-          setUpdatedAt(res.data.updatedAt || new Date().toISOString());
+          setEvents(res.data.processedEvents || 0);
+          setUpdatedAt(
+            res.data.lastUpdated
+              ? new Date(res.data.lastUpdated).toLocaleString()
+              : new Date().toLocaleString(),
+          );
         })
         .catch(console.error);
     };
