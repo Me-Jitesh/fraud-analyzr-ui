@@ -8,6 +8,7 @@ import {
   ExclamationTriangleIcon,
   BanknotesIcon,
 } from "@heroicons/react/24/outline";
+import useFraudAlert from "../hooks/useFraudAlert";
 
 const MAX_ALERTS = 400;
 const ROW_HEIGHT = 68;
@@ -19,6 +20,9 @@ export default function FraudAlerts() {
 
   const seenRef = useRef(new Set());
   const listRef = useRef(null);
+
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const triggerFraudAlert = useFraudAlert(soundEnabled);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -38,9 +42,15 @@ export default function FraudAlerts() {
 
             if (!seenRef.current.has(key)) {
               seenRef.current.add(key);
+
+              // 🔔 Trigger reusable fraud alert
+              triggerFraudAlert({
+                amount: a.amount,
+                type: a.reason,
+                accountId: a.accountId,
+              });
+
               newItems.push({ ...a, isNew: true });
-            } else {
-              break;
             }
           }
 

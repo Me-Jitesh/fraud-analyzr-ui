@@ -1,6 +1,12 @@
-import { ShieldExclamationIcon } from "@heroicons/react/24/solid";
+import {
+  ShieldExclamationIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+} from "@heroicons/react/24/solid";
+import { useState } from "react";
 
 export default function Header({ pulse }) {
+  const [soundEnabled, setSoundEnabled] = useState(true);
   return (
     <div
       className={`
@@ -24,6 +30,19 @@ export default function Header({ pulse }) {
           LIVE
         </span>
       </h1>
+
+      <button
+        onClick={() => setSoundEnabled(!soundEnabled)}
+        className="flex items-center gap-2 text-xs px-3 py-1 rounded-full
+                   border border-gray-200 bg-white shadow-sm hover:bg-gray-50"
+      >
+        {soundEnabled ? (
+          <SpeakerWaveIcon className="w-4 h-4 text-green-600" />
+        ) : (
+          <SpeakerXMarkIcon className="w-4 h-4 text-gray-400" />
+        )}
+        {soundEnabled ? "Sound ON" : "Sound OFF"}
+      </button>
 
       <div className="flex flex-wrap items-center gap-3">
         <p
