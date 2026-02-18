@@ -10,17 +10,6 @@ import { Toaster } from "react-hot-toast";
 export default function App() {
   return (
     <>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            borderRadius: "12px",
-            border: "1px solid #e5e7eb",
-          },
-        }}
-      />
-
       <div className="min-h-screen bg-[#fafafa] px-6 py-10">
         <div className="max-w-6xl mx-auto space-y-10">
           <Header pulse={true} />
@@ -36,6 +25,17 @@ export default function App() {
         <Analytics />
         <SpeedInsights />
       </div>
+
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 2000,
+          style: {
+            borderRadius: "12px",
+            border: "1px solid #e5e7eb",
+          },
+        }}
+      />
     </>
   );
 }

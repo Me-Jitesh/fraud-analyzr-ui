@@ -7,6 +7,8 @@ import FraudSkeleton from "./ui/FraudSkeleton";
 import {
   ExclamationTriangleIcon,
   BanknotesIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
 import useFraudAlert from "../hooks/useFraudAlert";
 
@@ -43,7 +45,6 @@ export default function FraudAlerts() {
             if (!seenRef.current.has(key)) {
               seenRef.current.add(key);
 
-              // 🔔 Trigger reusable fraud alert
               triggerFraudAlert({
                 amount: a.amount,
                 type: a.reason,
@@ -75,7 +76,7 @@ export default function FraudAlerts() {
     fetchAlerts();
     const id = setInterval(fetchAlerts, 4000);
     return () => clearInterval(id);
-  }, []);
+  }, [triggerFraudAlert]);
 
   useEffect(() => {
     const list = listRef.current;
@@ -94,7 +95,20 @@ export default function FraudAlerts() {
         title={
           <div className="flex items-center gap-2 uppercase">
             <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />
+
             <span>Suspicious Transaction Monitoring</span>
+            <button
+              onClick={() => setSoundEnabled(!soundEnabled)}
+              className="flex items-center gap-2 text-xs px-3 py-1 rounded-full
+                   border border-gray-200 bg-white shadow-sm hover:bg-gray-50"
+            >
+              {soundEnabled ? (
+                <SpeakerWaveIcon className="w-4 h-4 text-green-600" />
+              ) : (
+                <SpeakerXMarkIcon className="w-4 h-4 text-gray-400" />
+              )}
+              {soundEnabled ? "Sound ON" : "Sound OFF"}
+            </button>
           </div>
         }
       >
@@ -105,7 +119,7 @@ export default function FraudAlerts() {
             No suspicious activity detected
           </p>
         ) : (
-          <div className="h-[450px]">
+          <div className="h-[700px]">
             <div className="grid grid-cols-5 gap-4 text-[11px] text-gray-400 border-b pb-2 bg-white sticky top-0 z-10 px-2">
               <div>Account</div>
               <div>Transaction</div>
