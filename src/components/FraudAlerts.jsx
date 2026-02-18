@@ -119,7 +119,7 @@ export default function FraudAlerts() {
             No suspicious activity detected
           </p>
         ) : (
-          <div className="h-[700px]">
+          <div className="h-[800px]">
             <div className="grid grid-cols-5 gap-4 text-[11px] text-gray-400 border-b pb-2 bg-white sticky top-0 z-10 px-2">
               <div>Account</div>
               <div>Transaction</div>

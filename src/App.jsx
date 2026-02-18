@@ -26,16 +26,7 @@ export default function App() {
         <SpeedInsights />
       </div>
 
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          duration: 2000,
-          style: {
-            borderRadius: "12px",
-            border: "1px solid #e5e7eb",
-          },
-        }}
-      />
+      <Toaster position="bottom-right" />
     </>
   );
 }
