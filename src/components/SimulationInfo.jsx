@@ -4,6 +4,7 @@ import {
   BoltIcon,
   AdjustmentsHorizontalIcon,
   ChevronDownIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
 export default function SimulationInfo() {
@@ -62,6 +63,24 @@ export default function SimulationInfo() {
             <ul className="list-disc ml-7 text-gray-600 space-y-1 text-sm">
               <li>Allows custom number of transactions</li>
               <li>Best for stress testing fraud rules</li>
+            </ul>
+          </div>
+
+          {/* ML Scoring Strategy */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <ChartBarIcon className="w-5 h-5 text-blue-600" />
+              <h4 className="font-medium text-blue-600">ML Based Risk Score</h4>
+            </div>
+            <ul className="list-disc ml-7 text-gray-600 space-y-1 text-sm">
+              <li>
+                Used Logistic Regression based risk scoring model to calculate a
+                real time fraud probability score (0–100)
+              </li>
+              <li>
+                Uses transaction amount, velocity and historical patterns as
+                input features
+              </li>
             </ul>
           </div>
         </div>
