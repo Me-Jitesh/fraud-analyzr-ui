@@ -18,8 +18,8 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-6">
               <StreamStatus onStatusChange={setSystemStatus} />
-              <TransactionForm />
               <SimulationInfo />
+              <TransactionForm />
             </div>
             <FraudAlerts />
           </div>
