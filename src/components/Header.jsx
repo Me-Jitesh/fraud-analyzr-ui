@@ -40,7 +40,8 @@ export default function Header({ status = "UP" }) {
           className="backdrop-blur-md bg-white/60 border border-white/40
           text-gray-700 px-4 py-1.5 rounded-lg text-sm shadow-sm"
         >
-          Real-time transaction fraud detection powered by Kafka Streams
+          Real-Time Rule Based Fraud Detection For High-Velocity, High-Value
+          Transactions With ML Based Risk Scoring
         </p>
 
         <span
